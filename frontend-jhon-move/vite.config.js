@@ -1,36 +1,47 @@
-import { VitePWA } from 'vite-plugin-pwa';
+import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), VitePWA({
-    registerType: 'autoUpdate',
-    injectRegister: false,
-
-    pwaAssets: {
-      disabled: false,
-      config: true,
+  plugins: [
+    react(),
+    tailwindcss(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      injectRegister: false,
+      pwaAssets: {
+        disabled: false,
+        config: true,
+      },
+      manifest: {
+        name: 'John Move',
+        short_name: 'John Move',
+        description: 'Tu mejor ruta empieza aquí',
+        theme_color: '#0b0d12',
+        background_color: '#0b0d12',
+        display: 'standalone',
+        start_url: '/',
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,jpeg,jpg}'],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+      },
+      devOptions: {
+        enabled: false,
+        navigateFallback: 'index.html',
+        suppressWarnings: true,
+        type: 'module',
+      },
+    }),
+  ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
     },
-
-    manifest: {
-      name: 'frontend-jhon-move',
-      short_name: 'frontend',
-      description: 'aplicación tipo uber para taxis  ',
-      theme_color: '#ffffff',
-    },
-
-    workbox: {
-      globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
-      cleanupOutdatedCaches: true,
-      clientsClaim: true,
-    },
-
-    devOptions: {
-      enabled: false,
-      navigateFallback: 'index.html',
-      suppressWarnings: true,
-      type: 'module',
-    },
-  })],
+  },
 })
