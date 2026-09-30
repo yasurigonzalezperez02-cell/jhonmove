@@ -52,7 +52,8 @@ Frontend y backend son **dos proyectos Vercel separados**. No uses el preset Ser
 
 1. Importar proyecto único → carpeta `frontend-jhon-move`
 2. Framework: **Vite**
-3. Variable: `VITE_API_URL` = URL del backend (ej. `https://tu-backend.vercel.app`)
+3. Variable (opcional si ya está el default en código):
+   - `VITE_API_URL` = `https://jhonmove-rho.vercel.app`
 
 ### Backend (`backend-jhon-move`)
 

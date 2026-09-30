@@ -1,4 +1,6 @@
-const API_BASE = import.meta.env.VITE_API_URL || ''
+const API_BASE =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? 'https://jhonmove-rho.vercel.app' : '')
 
 async function request(path, { method = 'GET', body, token } = {}) {
   const headers = { 'Content-Type': 'application/json' }
