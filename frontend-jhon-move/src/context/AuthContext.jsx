@@ -57,13 +57,19 @@ export function AuthProvider({ children }) {
   }
 
   async function login(correo, contraseña) {
-    const data = await api.login({ correo, contraseña })
+    const data = await api.login({
+      correo: String(correo || '').trim().toLowerCase(),
+      contraseña,
+    })
     persist(data.token, data.user)
     return data.user
   }
 
   async function register(payload) {
-    const data = await api.register(payload)
+    const data = await api.register({
+      ...payload,
+      correo: String(payload.correo || '').trim().toLowerCase(),
+    })
     persist(data.token, data.user)
     return data.user
   }

@@ -11,7 +11,10 @@ function signToken(user) {
 }
 
 async function register(req, res) {
-  const { nombre, correo, contraseña, telefono, rol, documento, licencia } = req.body;
+  const { nombre, telefono, rol, documento, licencia } = req.body;
+  const correoRaw = req.body.correo || req.body.email;
+  const contraseña = req.body.contraseña || req.body.password;
+  const correo = typeof correoRaw === 'string' ? correoRaw.trim().toLowerCase() : '';
 
   if (!nombre || !correo || !contraseña || !rol) {
     return res.status(400).json({ error: 'nombre, correo, contraseña y rol son obligatorios' });
@@ -26,7 +29,7 @@ async function register(req, res) {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    const hash = await bcrypt.hash(contraseña, 10);
+    const hash = await bcrypt.hash(String(contraseña), 10);
     const [result] = await conn.execute(
       `INSERT INTO usuarios (nombre, correo, contraseña, telefono, rol)
        VALUES (?, ?, ?, ?, ?)`,
@@ -59,15 +62,18 @@ async function register(req, res) {
 }
 
 async function login(req, res) {
-  const { correo, contraseña } = req.body;
+  const correoRaw = req.body.correo || req.body.email;
+  const contraseña = req.body.contraseña || req.body.password;
+  const correo = typeof correoRaw === 'string' ? correoRaw.trim().toLowerCase() : '';
+
   if (!correo || !contraseña) {
     return res.status(400).json({ error: 'correo y contraseña son obligatorios' });
   }
 
   try {
     const rows = await query(
-      `SELECT id_usuario, nombre, correo, contraseña, telefono, rol, estado
-       FROM usuarios WHERE correo = ?`,
+      `SELECT id_usuario, nombre, correo, contraseña AS password_hash, telefono, rol, estado
+       FROM usuarios WHERE LOWER(TRIM(correo)) = ?`,
       [correo]
     );
     if (!rows.length) {
@@ -77,7 +83,7 @@ async function login(req, res) {
     if (user.estado !== 'activo') {
       return res.status(403).json({ error: 'Cuenta inactiva' });
     }
-    const ok = await bcrypt.compare(contraseña, user.contraseña);
+    const ok = await bcrypt.compare(String(contraseña), user.password_hash);
     if (!ok) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }

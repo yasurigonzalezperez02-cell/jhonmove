@@ -206,6 +206,15 @@ export default function AuthPage() {
               {busy ? 'Procesando…' : tab === 'login' ? 'Ingresar al Sistema' : 'Crear cuenta'}
             </button>
           </form>
+
+          {tab === 'login' ? (
+            <div className="mx-6 mt-5 rounded-2xl border border-navy-soft bg-navy-soft/70 p-4 text-xs text-mist space-y-1.5">
+              <p className="font-semibold text-amber">Cuentas de prueba</p>
+              <p>Admin: admin@johnmove.com / Admin123!</p>
+              <p>Pasajero: pasajero@johnmove.com / Test1234</p>
+              <p>Conductor: conductor@johnmove.com / Test1234</p>
+            </div>
+          ) : null}
         </div>
 
         <p className="px-6 pb-8 pt-6 text-center text-[11px] text-mist">
